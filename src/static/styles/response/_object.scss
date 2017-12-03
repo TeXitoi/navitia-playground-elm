@@ -1,0 +1,170 @@
+.with-bg-color {
+    display: inline-block;
+    border: none;
+    border-radius: 3em;// more than height/2 to have circle borders
+    text-align: center;// to have the code centered if smaller than min-width
+
+    // min-width + 2 * horizontal padding == line-height + 2 * vertical padding
+    // to have a circle if small enough
+    line-height: 1.2em;
+    min-width: 1em;
+    padding: 0.2em 0.3em;
+}
+
+.old-datetime {
+    text-decoration: line-through;
+}
+
+.outofdate, .error {
+    color: darken(red, 10%);
+}
+.almost_outofdate {
+    color: $dark-orange;
+}
+
+img.picto {
+    vertical-align: middle;
+    height: 1.6em;// height of line_code
+}
+
+.mode-and-code {
+    white-space: nowrap;
+}
+
+.section-additional-block {
+    white-space: nowrap;
+}
+.section-additional-block:before {
+    content: " ";
+    word-spacing: 2em;
+    white-space: normal;
+}
+
+div.object {
+    margin: 0.5em 0 0.5em 1em;
+    padding: 0;
+    border-style: solid;
+    border-width: 0 0 0 0.2em;
+    border-color: $dark-blue;
+
+    div.head {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: stretch;
+        background-color: white;
+        border-radius: 0 0.25em 0.25em 0;
+    }
+    div.name, div.button, div.summary {
+        display: flex;
+        align-items: center;
+        padding: 0.5em;
+    }
+    div.name {
+        font-weight: bold;
+        padding: 0.5em 1em;
+        a {
+            color: inherit;
+        }
+    }
+    div.summary {
+        flex: 1;
+        padding: 0.5em 1em;
+    }
+    div.data {
+        border-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    div.leaflet, .renderjson {
+        margin: 0.5em 0;
+        border-radius: 0 0.25em 0.25em 0;
+    }
+
+    div.leaflet {
+        height: 80vh;
+    }
+    
+    div.table {
+        overflow-x: auto;
+        margin: 0.5em 0 0.5em 0.5em;
+            
+        table {
+            background-color: white;
+            border-spacing: 0;
+            border-collapse: collapse;
+            text-align: center;
+      
+            th {
+                font-weight: bold;
+                padding: 0.5ex;
+                border: 0.1ex solid $gray;
+                color: inherit;
+            }
+             
+            td {
+                padding: 0.5ex;
+                border: 0.1ex solid $gray;
+                white-space: nowrap;
+            }
+            
+            td.stop-point {
+                text-align: right;
+            }
+            
+            td.time {
+                text-align: left;
+            }
+        }
+    }
+}
+
+@mixin object-color($color) {
+    border-color: dark($color);
+    div.name {
+        background-color: very-light($color);
+    }
+}
+
+// Will generate something like ($a n + $b as in nth-child):
+//   div.object{$a n + $b} { @include object-color($color); }
+// with a limit of depth 10, i.e. for $a = 3 and $b = 2:
+//   div.object div.object,
+//   div.object div.object div.object div.object div.object,
+//   div.object div.object div.object div.object div.object div.object div.object div.object {
+//       @include object-color($color);
+//   }
+@mixin deep-object($a, $b, $color) {
+    $res: '';
+    $selector: '';
+    @for $i from 1 through 10 {
+        $selector: $selector + ' div.object';
+        @if $i % $a == $b {
+            @if $res != '' { $res: $res + ', ' }
+            $res: $res + $selector;
+        }
+    }
+    @if $res != '' {
+        #{$res} { @include object-color($color); }
+    }
+}
+
+@include deep-object(2, 1, $blue);
+@include deep-object(2, 0, $yellow);
+
+@media screen and (max-width:35em) {
+    div.object {
+        margin-left: 1em;
+        div.head {
+            flex-wrap: wrap;
+        }
+        div.summary {
+            order: 3;
+            min-width: 80%;
+        }
+    }
+}
+
+#data > div {
+    margin: 0;
+}

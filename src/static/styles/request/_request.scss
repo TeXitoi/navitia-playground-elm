@@ -1,0 +1,72 @@
+#request {
+    background-color: white;
+    overflow-x: hidden;
+
+    #credentials, #path, #parameters {
+        display: flex;
+        flex-flow: row wrap;
+        width: calc(100% + 1em);
+        height: auto;
+    }
+
+    .templateInput {
+        box-shadow: 0 0 0.5em $dark-blue;
+    }
+
+    button::-moz-focus-inner {
+        border-style: none;
+        padding: 0;
+    }
+
+    @mixin request-parts($color) {
+        .key {
+            background-color: very-light($color);
+        }
+        .inputDiv {
+            border-color: dark($color);
+            border-radius: 0.25em 0.25em 0 0;
+        }
+        .templateInput {
+            box-shadow: 0 0 0.5em dark($color);
+        }
+        .inputDiv button {
+            color: dark($color);
+        }
+        .inputDiv button:disabled {
+            color: $gray;
+        }
+    }
+    #credentials { @include request-parts($orange); }
+    #path { @include request-parts($green); }
+    #parameters { @include request-parts($blue); }
+    #feature.inputDiv { border-color: $dark-purple; }
+
+    #urlDiv {
+        width: 100%;
+    }
+    #requestUrl{
+        margin: 0.5em;
+        overflow-x: auto;
+        a {
+            color: inherit;
+        }
+
+        @mixin url-colors($color) {
+            background-color: light($color);
+
+            .focusedParam {
+                background-color: dark($color);
+                color: white;
+            }
+        }
+
+        .api { @include url-colors($orange); }
+        .path { @include url-colors($green); }
+        .feature { @include url-colors($purple); }
+        .parameters { @include url-colors($blue); }
+    }
+    #submitDiv {
+        text-align: center;
+        margin: 0 0 1.25em 0;
+    }
+}

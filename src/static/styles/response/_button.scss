@@ -1,0 +1,32 @@
+div.object {
+    label.objectButton {
+        display: inline-block;
+    }
+
+    label.objectButton span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.6em;
+        width: 2.6em;
+        margin-left: 0.25em;
+        border: none;
+        border-radius: 0.25em;
+        text-align:center;
+        background-color: $light-gray;
+        color: $dark-gray;
+        font: 1em;
+        text-transform: uppercase;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    label.objectButton input {
+        display: none;
+    }
+
+    label.objectButton input:checked + span {
+        background-color: $dark-blue;
+        color: white;
+    }
+}

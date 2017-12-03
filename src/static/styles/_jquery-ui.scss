@@ -1,0 +1,110 @@
+.ui-widget, .notifyjs-navitia-base {
+    border-style: solid;
+    border-width: 0.1ex;
+    border-color: $gray;
+    background: white;
+    box-shadow: 0 0 0.5em rgba(0,0,0,0.2);
+}
+.notifyjs-navitia-base {
+    font-weight: bold;
+    padding: 0.5em;
+}
+.ui-widget-header {
+    border-style: solid;
+    border-width: 0 0 0.1ex 0;
+    border-color: $gray;
+    background: $light-gray;
+    padding: 0.5em;
+}
+.ui-helper-hidden-accessible {
+    display: none;
+}
+
+.ui-autocomplete {
+    max-height: 15em;
+    overflow-y: auto;
+    padding: 0;
+    position: absolute;
+    .ui-menu-item {
+        padding: 0.2em 0.5em;
+        line-height: 1.5em;
+    }
+    .ui-state-focus {
+        background: $light-blue;
+    }
+}
+
+.ui-datepicker-header {
+    span.ui-icon {
+        display: none;
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    a.ui-datepicker-prev:after {
+        content: '<';
+    }
+    a.ui-datepicker-prev {
+        display: block;
+        float: left;
+        cursor: pointer;
+    }
+    a.ui-datepicker-next:after {
+        content: '>';
+    }
+    a.ui-datepicker-next {
+        display: block;
+        float: right;
+        cursor: pointer;
+    }
+    .ui-datepicker-title {
+        text-align: center;
+    }
+}
+
+table.ui-datepicker-calendar {
+    width: 100%;
+    border-spacing: 0.5em;
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+    td {
+        text-align: right;
+    }
+    .ui-datepicker-today {
+        font-weight: bold;
+    }
+    .ui-datepicker-current-day {
+        background: $light-blue;
+    }
+}
+
+.ui-timepicker-div.ui-timepicker-oneLine {
+    padding: 0.5em;
+    dl {
+        margin: 0;
+    }
+    dt.ui_tpicker_time_label {
+        padding: 0.5em;
+        padding-left: 0;
+    }
+    select {
+        background: $light-gray;
+        border: 0.1em solid $gray;
+        padding: 0.3em;
+        font-family: inherit;
+        font-size: inherit;
+    }
+}
+
+.ui-datepicker-buttonpane {
+    padding: 0.5em;
+    button {
+        padding: 0.5em;
+    }
+    button.ui-datepicker-close {
+        float: right;
+    }
+}
