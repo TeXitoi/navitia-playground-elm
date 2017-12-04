@@ -1,5 +1,5 @@
-import Html exposing (Html, div, span, h2, h3, input, button, text)
-import Html.Attributes exposing (id, class, placeholder, value, type_)
+import Html exposing (Html, div, span, h2, h3, input, button, text, a)
+import Html.Attributes exposing (id, class, placeholder, value, type_, href)
 import Html.Events exposing (onInput, onFocus, onBlur)
 import Http
 import Regex exposing (Regex, regex)
@@ -148,6 +148,7 @@ view model =
             [ onInput InputFeature
             , value model.feature
             , placeholder "empty feature"
+            , Html.Attributes.attribute "onClick" "this.select();"
             ]
             []
         ]
@@ -162,33 +163,43 @@ view model =
         ++ Http.encodeUri model.feature
         ++ "?"
         ++ KeyValue.encodeUri "=" "&" model.params
+
+    prettyUrl =
+      [ span [ class "api" ] [ text model.api ]
+      , span [ class "path" ] [ text (KeyValue.encodeUri "/" "/" model.path ++ "/") ]
+      , span [ class "feature" ] [ text (Http.encodeUri model.feature) ]
+      , span [ class "parameters" ] [ text (KeyValue.encodeUri "=" "&" model.params) ]
+      ]
   in
       div []
         [ h2 [] [ text "Create a request" ]
         , h3 [] [ text "Fill out credential info" ]
         , div [ id "credentials" ]
-          [ div [ class "inputDiv" ]
-              [ span [ class "key" ] [ text "API" ]
-              , input
-                  [ onInput InputApi
-                  , value model.api
-                  , placeholder "API"
-                  ]
-                  []
-              ]
-          , div [ class "inputDiv" ]
-              [ span [ class "key" ] [ text "Token" ]
-              , input
-                  [ onInput InputToken
-                  , value model.token
-                  , placeholder "Token"
-                  , type_ <| if model.focusToken then "text" else "password"
-                  , onFocus (FocusToken True)
-                  , onBlur (FocusToken False)
-                  ]
-                  []
-              ]
-          ]
+            [ div [ class "inputDiv" ]
+                [ span [ class "key" ] [ text "API" ]
+                , input
+                    [ onInput InputApi
+                    , value model.api
+                    , placeholder "API"
+                    , Html.Attributes.attribute "onClick" "this.select();"
+                    ]
+                    []
+                ]
+            , div [ class "inputDiv" ]
+                [ span [ class "key" ] [ text "Token" ]
+                , input
+                    [ onInput InputToken
+                    , value model.token
+                    , placeholder "Token"
+                    , type_ <| if model.focusToken then "text" else "password"
+                    -- Doesn't work because type is changed after onClick :/
+                    --, Html.Attributes.attribute "onClick" "this.select();"
+                    , onFocus (FocusToken True)
+                    , onBlur (FocusToken False)
+                    ]
+                    []
+                ]
+            ]
         , h3 [] [ text "Build your path" ]
         , div [ id "path" ] <| path ++ [ feature ]
         , h3 [] [ text "Add parameters" ]
@@ -196,7 +207,8 @@ view model =
         , h3 [] [ text "Send the request" ]
         , div [ id "urlDiv", class "inputDiv" ]
           [ span [ class "key" ] [ text "URL" ]
-          , span [ id "requestUrl" ] [ text url ]
+          , span [ id "requestUrl" ]
+              [ a [ href url ] prettyUrl ]
           ]
         , div [ id "submitDiv" ] [ button [] [ text "Submit" ] ]
         ]

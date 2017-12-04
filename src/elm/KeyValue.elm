@@ -84,7 +84,13 @@ makeKeyValue : Int -> (String, String) -> Html Msg
 makeKeyValue i (k, v) =
   div [ class "inputDiv" ]
     [ span [ class "key" ] [ text k ]
-    , input [ class "value", onInput (InputValue i), value v ] []
+    , input
+        [ class "value"
+        , onInput (InputValue i)
+        , value v
+        , Html.Attributes.attribute "onClick" "this.select();"
+        ]
+        []
     , button [ onClick (Delete i) ]
         [ img [ src "static/img/delete.svg", alt "delete", title "delete" ] [] ]
     ]
