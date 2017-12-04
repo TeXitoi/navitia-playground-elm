@@ -1,8 +1,9 @@
-module KeyValue exposing (Model, model, Msg, update, view)
+module KeyValue exposing (Model, empty, model, encodeUri, Msg, update, view)
 
-import Html exposing (Html, div, span, input, button, text)
-import Html.Attributes exposing (id, class, type_, placeholder, value, disabled)
+import Html exposing (Html, div, span, input, button, text, img)
+import Html.Attributes exposing (id, class, type_, placeholder, value, disabled, src, alt)
 import Html.Events exposing (onClick, onInput)
+import Http
 
 
 type alias Model =
@@ -11,12 +12,25 @@ type alias Model =
   }
 
 
-model : Model
-model =
+empty : Model
+empty =
   { keysValues = []
   , new = ""
   }
 
+
+model : List (String, String) -> Model
+model kvs =
+  { keysValues = kvs
+  , new = ""
+  }
+
+
+encodeUri : String -> String -> Model -> String
+encodeUri kvSep eltSep model =
+  model.keysValues
+    |> List.map (\(k, v) -> Http.encodeUri k ++ kvSep ++ Http.encodeUri v)
+    |> String.join eltSep
 
 type Msg
   = Add
@@ -71,7 +85,7 @@ makeKeyValue i (k, v) =
   div [ class "inputDiv" ]
     [ span [ class "key" ] [ text k ]
     , input [ class "value", onInput (InputValue i), value v ] []
-    , button [ onClick (Delete i) ] [ text "delete" ]
+    , button [ onClick (Delete i) ] [ img [ src "img/delete.svg", alt "delete" ] [] ]
     ]
 
 

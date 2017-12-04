@@ -1,7 +1,8 @@
 import Html exposing (Html, div, span, h2, h3, input, button, text)
 import Html.Attributes exposing (id, class, placeholder, value, type_)
 import Html.Events exposing (onInput, onFocus, onBlur)
-import Regex exposing (Regex)
+import Http
+import Regex exposing (Regex, regex)
 
 import KeyValue
 
@@ -35,7 +36,7 @@ type alias Model =
 
 urlRegex : Regex
 urlRegex =
-  Regex.regex "^([^?]*/v[0-9]+/)([^?]*)\\??([^#]*)?(#.*)*$"
+  regex "^([^?]*/v[0-9]+/)([^?]*)\\??([^#]*)?(#.*)*$"
 
 
 init : Flags -> (Model, Cmd Msg)
@@ -59,21 +60,44 @@ init flags =
         |> nth 1
         |> Maybe.withDefault Nothing
         |> Maybe.map (String.split "/")
-        |> Maybe.map (List.filter (String.isEmpty >> not))
         |> Maybe.withDefault []
+        |> List.filter (String.isEmpty >> not)
+        |> List.map (\s -> Http.decodeUri s |> Maybe.withDefault s)
+
+    zipPath l =
+      case l of
+          k :: v :: q -> (k, v) :: zipPath q
+          _ -> []
+    path =
+      zipPath pathAndFeature
 
     feature =
       if List.length pathAndFeature % 2 == 0 then
         Nothing
       else
         List.reverse pathAndFeature |> List.head
+
+    zipParam l =
+      case l of
+          [] -> ("", "")
+          t :: q -> (t, String.join "=" q)
+    params =
+      submatches
+        |> nth 2
+        |> Maybe.withDefault Nothing
+        |> Maybe.map (String.split "&")
+        |> Maybe.withDefault []
+        |> List.filter (String.isEmpty >> not)
+        |> List.map (\s -> Http.decodeUri s |> Maybe.withDefault s)
+        |> List.map (Regex.split (Regex.AtMost 1) (regex "="))
+        |> List.map zipParam
   in
       { api = api
       , token = Maybe.withDefault "" flags.token
       , focusToken = False
-      , path = KeyValue.model
+      , path = KeyValue.model path
       , feature = Maybe.withDefault "" feature
-      , params = KeyValue.model
+      , params = KeyValue.model params
       } ! []
 
 
@@ -130,6 +154,14 @@ view model =
 
     params =
       List.map (Html.map Params) (KeyValue.view model.params)
+
+    url =
+      model.api
+        ++ KeyValue.encodeUri "/" "/" model.path
+        ++ "/"
+        ++ Http.encodeUri model.feature
+        ++ "?"
+        ++ KeyValue.encodeUri "=" "&" model.params
   in
       div []
         [ h2 [] [ text "Create a request" ]
@@ -164,7 +196,7 @@ view model =
         , h3 [] [ text "Send the request" ]
         , div [ id "urlDiv", class "inputDiv" ]
           [ span [ class "key" ] [ text "URL" ]
-          , span [ id "requestUrl" ] [ text "toto" ]
+          , span [ id "requestUrl" ] [ text url ]
           ]
         , div [ id "submitDiv" ] [ button [] [ text "Submit" ] ]
         ]
