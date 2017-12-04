@@ -1,7 +1,7 @@
 module KeyValue exposing (Model, empty, model, encodeUri, Msg, update, view)
 
-import Html exposing (Html, div, span, input, button, text, img)
-import Html.Attributes exposing (id, class, type_, placeholder, value, disabled, src, alt)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Http
 
@@ -85,7 +85,8 @@ makeKeyValue i (k, v) =
   div [ class "inputDiv" ]
     [ span [ class "key" ] [ text k ]
     , input [ class "value", onInput (InputValue i), value v ] []
-    , button [ onClick (Delete i) ] [ img [ src "img/delete.svg", alt "delete" ] [] ]
+    , button [ onClick (Delete i) ]
+        [ img [ src "static/img/delete.svg", alt "delete", title "delete" ] [] ]
     ]
 
 
