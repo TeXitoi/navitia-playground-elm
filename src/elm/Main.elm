@@ -32,6 +32,7 @@ type alias Flags =
 type alias Model =
   { api: String
   , token: String
+  , storedApis: List (String, String)
   , focusToken: Bool
   , path: KeyValue.Model
   , feature: String
@@ -99,6 +100,7 @@ init flags =
   in
       { api = api
       , token = Maybe.withDefault "" flags.token
+      , storedApis = []
       , focusToken = False
       , path = KeyValue.model path
       , feature = Maybe.withDefault "" feature
@@ -138,8 +140,15 @@ update msg model =
       Params msg ->
         { model | params = KeyValue.update msg model.params } ! []
 
-      LocalStorage _ ->
-        model ! []
+      LocalStorage ls ->
+        let
+          prefix = "navitia-playground.api."
+          apis =
+            ls
+              |> List.filter (\(k, _) -> String.startsWith prefix k)
+              |> List.map (\(k, v) -> (String.dropLeft (String.length prefix) k, v))
+        in
+            { model | storedApis = Debug.log "apis" apis } ! []
  
 
 
