@@ -2,11 +2,17 @@
 require( './styles/style.scss' );
 
 var search = new URLSearchParams(document.location.search);
-console.log(search.get('request'), search.get('token'));
 
 // inject bundled Elm app into div#main
 var Elm = require('../elm/Main');
-Elm.Main.embed(document.getElementById('main'), {
+var app = Elm.Main.embed(document.getElementById('main'), {
     request: search.get('request'),
     token: search.get('token')
+});
+app.ports.getLocalStorage.subscribe(function() {
+    var res = []
+    Object.keys(window.localStorage).forEach(function(key) {
+        res.push([key, window.localStorage.getItem(key)]);
+    });
+    app.ports.localStorage.send(res)
 });

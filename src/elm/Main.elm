@@ -1,3 +1,5 @@
+port module Main exposing (..)
+
 import Html exposing (Html, div, span, h2, h3, input, button, text, a)
 import Html.Attributes exposing (id, class, placeholder, value, type_, href)
 import Html.Events exposing (onInput, onFocus, onBlur)
@@ -6,6 +8,9 @@ import Regex exposing (Regex, regex)
 
 import KeyValue
 
+port getLocalStorage : () -> Cmd msg
+port localStorage : (List (String, String) -> msg) -> Sub msg
+
 
 main : Program Flags Model Msg
 main =
@@ -13,7 +18,7 @@ main =
     { init = init
     , view = view
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = \_ -> localStorage LocalStorage
     }
 
 
@@ -98,7 +103,7 @@ init flags =
       , path = KeyValue.model path
       , feature = Maybe.withDefault "" feature
       , params = KeyValue.model params
-      } ! []
+      } ! [getLocalStorage ()]
 
 
 -- UPDATE
@@ -110,6 +115,7 @@ type Msg
   | Path KeyValue.Msg
   | InputFeature String
   | Params KeyValue.Msg
+  | LocalStorage (List (String, String))
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -131,6 +137,9 @@ update msg model =
 
       Params msg ->
         { model | params = KeyValue.update msg model.params } ! []
+
+      LocalStorage _ ->
+        model ! []
  
 
 
